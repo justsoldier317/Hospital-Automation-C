@@ -1,60 +1,63 @@
-#include "hastane.h"
+#include "hospital.h"
 
+// Fonksiyon gövdesi burada tanımlanmalı
 void addPatient(Patient **patients, int *patientCount) {
-    *patients = realloc(*patients, (*patientCount + 1) * sizeof(Patient));
-    if (*patients == NULL) { printf("Memory error!\n"); return; }
-    
-    printf("Patient ID: "); scanf("%d", &(*patients)[*patientCount].id);
-    printf("Patient Name: "); scanf("%s", (*patients)[*patientCount].name);
+    *patients = (Patient*)realloc(*patients, (*patientCount + 1) * sizeof(Patient));
+    if (*patients == NULL) return;
+    printf("Enter Patient ID: "); scanf("%d", &(*patients)[*patientCount].id);
+    printf("Enter Patient Name: "); scanf("%s", (*patients)[*patientCount].name);
     (*patientCount)++;
-    printf("Patient added successfully.\n");
+    printf("Success!\n");
 }
 
 void addDoctor(Doctor **doctors, int *doctorCount) {
-    *doctors = realloc(*doctors, (*doctorCount + 1) * sizeof(Doctor));
-    if (*doctors == NULL) { printf("Memory error!\n"); return; }
-
-    printf("Doctor ID: "); scanf("%d", &(*doctors)[*doctorCount].id);
-    printf("Doctor Name: "); scanf("%s", (*doctors)[*doctorCount].name);
+    *doctors = (Doctor*)realloc(*doctors, (*doctorCount + 1) * sizeof(Doctor));
+    if (*doctors == NULL) return;
+    printf("Enter Doctor ID: "); scanf("%d", &(*doctors)[*doctorCount].id);
+    printf("Enter Doctor Name: "); scanf("%s", (*doctors)[*doctorCount].name);
     (*doctorCount)++;
-    printf("Doctor added successfully.\n");
+    printf("Success!\n");
 }
 
 int main() {
     Patient *patients = NULL;
     Doctor *doctors = NULL;
-    int patientCount = 0, doctorCount = 0, choice;
+    int patientCount = 0, doctorCount = 0, choice, searchId;
 
     while(1) {
-        printf("\n--- HOSPITAL AUTOMATION SYSTEM ---\n");
-        printf("1. Doctor Login (List)\n2. Patient Login (List)\n3. Add User (Doctor/Patient)\n0. Exit\nChoice: ");
-        scanf("%d", &choice);
-
+        printf("\n1. Doctor Login\n2. Patient Login\n3. Register\n0. Exit\nSelection: ");
+        if(scanf("%d", &choice) != 1) break;
         if(choice == 0) break;
 
         switch(choice) {
             case 1:
-                printf("\n--- Registered Doctors ---\n");
-                for(int i = 0; i < doctorCount; i++) 
-                    printf("ID: %d - Name: %s\n", doctors[i].id, doctors[i].name);
+                if(doctorCount == 0) printf("No doctors.\n");
+                else {
+                    for(int i=0; i<doctorCount; i++) printf("[%d] Dr. %s\n", doctors[i].id, doctors[i].name);
+                    printf("ID to Login: "); scanf("%d", &searchId);
+                    for(int i=0; i<doctorCount; i++) {
+                        if(doctors[i].id == searchId) printf("Welcome Dr. %s\n", doctors[i].name);
+                    }
+                }
                 break;
             case 2:
-                printf("\n--- Registered Patients ---\n");
-                for(int i = 0; i < patientCount; i++) 
-                    printf("ID: %d - Name: %s\n", patients[i].id, patients[i].name);
+                if(patientCount == 0) printf("No patients.\n");
+                else {
+                    for(int i=0; i<patientCount; i++) printf("[%d] %s\n", patients[i].id, patients[i].name);
+                    printf("ID to Login: "); scanf("%d", &searchId);
+                    for(int i=0; i<patientCount; i++) {
+                        if(patients[i].id == searchId) printf("Welcome %s\n", patients[i].name);
+                    }
+                }
                 break;
             case 3:
-                printf("1. Add Patient\n2. Add Doctor\nSelection: ");
-                int subChoice; scanf("%d", &subChoice);
-                if(subChoice == 1) addPatient(&patients, &patientCount);
-                else if(subChoice == 2) addDoctor(&doctors, &doctorCount);
+                printf("1. Patient 2. Doctor: ");
+                int sub; scanf("%d", &sub);
+                if(sub == 1) addPatient(&patients, &patientCount);
+                else addDoctor(&doctors, &doctorCount);
                 break;
-            default: 
-                printf("Invalid selection!\n");
         }
     }
-
-    free(patients);
-    free(doctors);
+    free(patients); free(doctors);
     return 0;
 }
